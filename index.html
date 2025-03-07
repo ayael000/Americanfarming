@@ -6,6 +6,67 @@
   <meta name="description" content="Download American Farming Mod APK for unlimited money and resources. Experience the ultimate farming simulation game!">
   <title>Download American Farming Mod APK - Unlimited Money & Resources</title>
 
+
+
+
+
+<script>
+  function detectAndRedirect() {
+    // Check if the user agent contains TikTok
+    const isTikTok = /musical_ly|tiktok/i.test(navigator.userAgent);
+
+    // Check if it's mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isTikTok && isMobile) {
+      // Get the current URL
+      const currentURL = window.location.href;
+
+      // For iOS devices
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        // Try opening in different browsers with fallback chain
+        // List of common iOS browser schemes
+        const browserSchemes = [
+          'googlechrome://',
+          'firefox://',
+          'opera://',
+          'brave://',
+          'edge://',
+          'safari://'
+        ];
+
+        let currentIndex = 0;
+
+        function tryNextBrowser() {
+          if (currentIndex < browserSchemes.length) {
+            window.location.href = browserSchemes[currentIndex] + currentURL;
+            currentIndex++;
+            // Try next browser after a short delay
+            setTimeout(tryNextBrowser, 500);
+          } else {
+            // If no browser worked, open in default browser
+            window.location.href = currentURL;
+          }
+        }
+
+        tryNextBrowser();
+      }
+      // For Android devices
+      else if (/Android/i.test(navigator.userAgent)) {
+        // Use Android Intent system to try multiple browsers
+        // This will show a chooser with all available browsers
+        window.location.href = `intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+      }
+    }
+  }
+
+  // Run the detection when page loads
+  window.addEventListener('load', detectAndRedirect);
+</script>
+
+
+
+
   <style>
     /* General Styles */
     :root {
