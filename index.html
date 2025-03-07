@@ -12,10 +12,10 @@
 
 <script>
   function detectAndRedirect() {
-    // Check if the user agent contains TikTok
-    const isTikTok = /musical_ly|tiktok/i.test(navigator.userAgent);
+    // Check if the user agent contains TikTok or related apps
+    const isTikTok = /tiktok|musically|snapchat|instagram/i.test(navigator.userAgent);
 
-    // Check if it's mobile device
+    // Check if it's a mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     if (isTikTok && isMobile) {
@@ -24,44 +24,107 @@
 
       // For iOS devices
       if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        // Try opening in different browsers with fallback chain
-        // List of common iOS browser schemes
-        const browserSchemes = [
-          'googlechrome://',
-          'firefox://',
-          'opera://',
-          'brave://',
-          'edge://',
-          'safari://'
-        ];
+        const chromeScheme = 'googlechrome://';
+        const safariScheme = 'safari://';
+        const fallbackURL = currentURL;
 
-        let currentIndex = 0;
+        // Try opening in Chrome first
+        window.location.href = `${chromeScheme}${currentURL}`;
 
-        function tryNextBrowser() {
-          if (currentIndex < browserSchemes.length) {
-            window.location.href = browserSchemes[currentIndex] + currentURL;
-            currentIndex++;
-            // Try next browser after a short delay
-            setTimeout(tryNextBrowser, 500);
-          } else {
-            // If no browser worked, open in default browser
-            window.location.href = currentURL;
-          }
-        }
-
-        tryNextBrowser();
+        // Fallback to Safari or default browser after a short delay
+        setTimeout(() => {
+          window.location.href = fallbackURL;
+        }, 500);
       }
       // For Android devices
       else if (/Android/i.test(navigator.userAgent)) {
-        // Use Android Intent system to try multiple browsers
-        // This will show a chooser with all available browsers
-        window.location.href = `intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`;
+        const intentURL = `intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(currentURL)};end`;
+
+        window.location.href = intentURL;
+
+        // Fallback to default browser after a short delay
+        setTimeout(() => {
+          window.location.href = currentURL;
+        }, 500);
       }
     }
   }
 
-  // Run the detection when page loads
+  // Run the detection when the page loads
   window.addEventListener('load', detectAndRedirect);
+
+  // Theme Toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+
+  // Check for saved theme in localStorage
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+    body.setAttribute('data-theme', savedTheme);
+    updateToggleIcon(savedTheme);
+  }
+
+  // Toggle theme on button click
+  themeToggle.addEventListener('click', () => {
+    const currentTheme = body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    body.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateToggleIcon(newTheme);
+  });
+
+  // Update toggle icon based on theme
+  function updateToggleIcon(theme) {
+    const icon = themeToggle.querySelector('i');
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+  }
+
+  // Carousel Functionality
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.carousel img');
+  const totalSlides = slides.length;
+  const carouselDots = document.querySelector('.carousel-dots');
+
+  // Create dots
+  slides.forEach((slide, index) => {
+    const dot = document.createElement('div');
+    dot.classList.add('dot');
+    if (index === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => {
+      currentSlide = index;
+      showSlide(currentSlide);
+      updateDots();
+    });
+    carouselDots.appendChild(dot);
+  });
+
+  function showSlide(index) {
+    const carouselInner = document.querySelector('.carousel-inner');
+    const offset = -index * 100;
+    carouselInner.style.transform = `translateX(${offset}%)`;
+  }
+
+  function updateDots() {
+    const dots = document.querySelectorAll('.carousel-dots .dot');
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentSlide);
+    });
+  }
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    showSlide(currentSlide);
+    updateDots();
+  }
+
+  function prevSlide() {
+    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    showSlide(currentSlide);
+    updateDots();
+  }
+
+  // Auto-play carousel (optional)
+  setInterval(nextSlide, 5000);
 </script>
 
 
