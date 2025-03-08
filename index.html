@@ -10,54 +10,6 @@
 
 
 
-<script>
-  function detectAndRedirect() {
-    // Log the user agent for debugging
-    console.log('User Agent:', navigator.userAgent);
-
-    // Check if the user agent contains TikTok or related apps
-    const isTikTok = /tiktok|musically|snapchat|instagram/i.test(navigator.userAgent);
-
-    // Check if it's a mobile device
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-    if (isTikTok && isMobile) {
-      // Get the current URL
-      const currentURL = window.location.href;
-
-      // For iOS devices
-      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        // Try opening in Chrome first
-        window.location.href = `googlechrome://${currentURL}`;
-
-        // Fallback to default browser after a short delay
-        setTimeout(() => {
-          window.location.href = currentURL;
-        }, 500);
-      }
-      // For Android devices
-      else if (/Android/i.test(navigator.userAgent)) {
-        // Use Android Intent system to open in Chrome
-        const intentURL = `intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(currentURL)};end`;
-
-        window.location.href = intentURL;
-
-        // Fallback to default browser after a short delay
-        setTimeout(() => {
-          window.location.href = currentURL;
-        }, 500);
-      }
-    }
-  }
-
-  // Run the detection when the page loads
-  window.addEventListener('load', detectAndRedirect);
-</script>
-
-
-
-
-
   <style>
     /* General Styles */
     :root {
