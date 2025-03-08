@@ -15,79 +15,46 @@
 
 
 
-  .hidden {
-        display: none;
-    }
-    .fixed {
+ .tiktok-modal {
+        display: none; /* Hidden by default */
         position: fixed;
-    }
-    .inset-0 {
         top: 0;
-        right: 0;
-        bottom: 0;
         left: 0;
-    }
-    .bg-black {
-        background-color: black;
-    }
-    .bg-opacity-70 {
+        width: 100%;
+        height: 100%;
         background-color: rgba(0, 0, 0, 0.7);
-    }
-    .flex {
-        display: flex;
-    }
-    .items-center {
+        z-index: 1000;
+        justify-content: center;
         align-items: center;
     }
-    .justify-center {
-        justify-content: center;
-    }
-    .z-50 {
-        z-index: 50;
-    }
-    .bg-white {
+
+    .tiktok-modal-content {
         background-color: white;
-    }
-    .rounded-lg {
-        border-radius: 0.5rem;
-    }
-    .p-6 {
-        padding: 1.5rem;
-    }
-    .max-w-md {
-        max-width: 28rem;
-    }
-    .w-full {
-        width: 100%;
-    }
-    .mx-4 {
-        margin-left: 1rem;
-        margin-right: 1rem;
-    }
-    .text-center {
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 90%;
+        width: 400px;
         text-align: center;
     }
-    .text-2xl {
-        font-size: 1.5rem;
-    }
-    .font-bold {
-        font-weight: 700;
-    }
-    .mb-4 {
-        margin-bottom: 1rem;
-    }
-    .text-gray-700 {
-        color: #4a5568;
-    }
-    .mb-6 {
-        margin-bottom: 1.5rem;
-    }
-    #tiktok-logo {
+
+    .tiktok-logo {
         width: 100%;
-        max-width: 400px;
-        margin: 1rem auto;
-        display: block;
+        max-width: 300px;
+        margin: 15px auto;
     }
+
+    .tiktok-modal-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .tiktok-modal-text {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+
 
 
     /* General Styles */
@@ -541,54 +508,64 @@
 
 
 
-<!-- Modal HTML -->
-<div id="custom-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 text-center">
-        <h2 class="text-2xl font-bold mb-4">For a better experience, open in an external browser</h2>
-        <img id="tiktok-logo" src="https://www9.0zz0.com/2024/04/06/13/548511907.gif" alt="TikTok Logo">
-        <p class="text-gray-700 mb-6">Here is how to open an external browser.</p>
+<!-- Modal that will only show for TikTok browser users -->
+<div id="tiktokModal" class="tiktok-modal">
+    <div class="tiktok-modal-content">
+        <h2 class="tiktok-modal-title">For a better experience, open in an external browser</h2>
+        <img class="tiktok-logo" src="https://www9.0zz0.com/2024/04/06/13/548511907.gif" alt="TikTok Logo">
+        <p class="tiktok-modal-text">Here is how to open an external browser.</p>
     </div>
 </div>
 
-<!-- JavaScript code -->
+<!-- JavaScript to detect TikTok browser and show modal -->
 <script>
-    // Define all functions first
-    function isTikTokBrowser() {
-        const userAgent = navigator.userAgent.toLowerCase();
-        return userAgent.includes('tiktok') || userAgent.includes('webview');
-    }
-    
-    function openInExternalBrowser() {
-        const currentUrl = window.location.href;
-        window.open(currentUrl, '_blank');
-    }
-    
-    function openLinkBasedOnDevice(url) {
-        var userAgent = navigator.userAgent;
-        
-        if (/(android)/i.test(userAgent)) {
-            // If the device is Android, open the link in Chrome
-            window.location.href = 'intent://' + url.substring(url.indexOf("://") + 3) + '#Intent;scheme=http;package=com.android.chrome;end;';
-        } else if (/(iphone|ipad|ipod)/i.test(userAgent)) {
-            // If the device is iOS, open the link in Safari
-            window.location.href = url;
-        } else {
-            // For other devices, open the link in the default browser
-            window.location.href = url;
-        }
-    }
-    
-    // Execute when the page loads
     document.addEventListener('DOMContentLoaded', function() {
+        // Function to detect if browser is TikTok
+        function isTikTokBrowser() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            return userAgent.includes('tiktok') || 
+                   userAgent.includes('musical_ly') || 
+                   userAgent.includes('bytedance') || 
+                   userAgent.includes('webview');
+        }
+
+        // Function to try opening in external browser
+        function openInExternalBrowser() {
+            // Get the current URL
+            const currentUrl = window.location.href;
+            
+            // Detect device type
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            if (isAndroid) {
+                // For Android, attempt to use Chrome
+                window.location.href = 'intent://' + currentUrl.substring(currentUrl.indexOf('://') + 3) + '#Intent;scheme=https;package=com.android.chrome;end';
+            } else if (isIOS) {
+                // For iOS, attempt to use Safari
+                window.location.href = currentUrl;
+            } else {
+                // Fallback - just open in a new tab
+                window.open(currentUrl, '_blank');
+            }
+        }
+
+        // Check if we're in TikTok browser
         if (isTikTokBrowser()) {
-            var url = 'https://www.gameforyou.site';
-            openLinkBasedOnDevice(url);
             // Show the modal
-            document.getElementById('custom-modal').classList.remove('hidden');
+            const modal = document.getElementById('tiktokModal');
+            modal.style.display = 'flex';
+            
+            // Try to open in external browser
+            openInExternalBrowser();
+            
+            // Can also attach click event to modal to try again
+            modal.addEventListener('click', function() {
+                openInExternalBrowser();
+            });
         }
     });
 </script>
-
 
 
 
