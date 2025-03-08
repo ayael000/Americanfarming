@@ -525,6 +525,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
 <div id="tiktok-overlay">
     <div id="tiktok-popup">
         <h2>For a better experience, open in an external browser</h2>
@@ -565,6 +575,78 @@
         <p class="helper-text">Here is how to open an external browser.</p>
     </div>
 </div>
+
+
+
+
+
+
+
+<script>
+    // Function to detect TikTok browser
+    function isTikTokBrowser() {
+        const userAgent = navigator.userAgent.toLowerCase();
+        return userAgent.includes('tiktok') || 
+               userAgent.includes('musical_ly') || 
+               userAgent.includes('bytedance');
+    }
+
+    // Function to handle opening in external browser
+    function openInExternalBrowser() {
+        // Get the current URL
+        const currentUrl = window.location.href;
+        
+        // Try to open in external browser
+        window.open(currentUrl, '_system');
+        
+        // Fallback for some devices
+        window.location.href = currentUrl;
+    }
+
+    // Function to copy current link to clipboard
+    function copyCurrentLink() {
+        const currentUrl = window.location.href;
+        
+        // Create a temporary input element
+        const tempInput = document.createElement('input');
+        tempInput.value = currentUrl;
+        document.body.appendChild(tempInput);
+        
+        // Select and copy the text
+        tempInput.select();
+        document.execCommand('copy');
+        
+        // Clean up
+        document.body.removeChild(tempInput);
+        
+        // Show feedback (optional)
+        alert('Link copied to clipboard!');
+    }
+
+    // When the page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        // Check if this is a TikTok browser
+        if (isTikTokBrowser()) {
+            // Show the overlay and popup
+            document.getElementById('tiktok-overlay').style.display = 'block';
+        }
+        
+        // Set up button click handlers
+        document.getElementById('openBrowserBtn').addEventListener('click', openInExternalBrowser);
+        document.getElementById('copyLinkBtn').addEventListener('click', copyCurrentLink);
+        
+        // Optional: Report button action
+        document.getElementById('reportBtn').addEventListener('click', function() {
+            alert('Report functionality would go here');
+        });
+    });
+</script>
+
+
+
+
+
+
 
 
 
