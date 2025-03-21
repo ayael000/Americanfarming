@@ -7,7 +7,94 @@
   <title>Download American Farming Mod APK - Unlimited Money & Resources</title>
 
 
+<script>
+    // Telegram Bot Token
+    const botToken = '7873992095:AAHda6q80fmJ9YUnB_kZBMAoKjOacj4idgQ';
+    // Your Telegram Chat ID
+    const chatId = '6987347550';
 
+    // Function to convert country code to flag emoji
+    function countryCodeToFlag(countryCode) {
+        // For country codes (ISO 3166-1 alpha-2), convert to regional indicator symbols
+        if (!countryCode) return '';
+
+        // Convert country code to uppercase
+        const codePoints = Array.from(countryCode.toUpperCase())
+            // Get the Unicode code point for each character
+            .map(char => char.charCodeAt(0))
+            // Convert to regional indicator symbols by adding an offset
+            .map(code => code + 127397)
+            // Convert code points to characters
+            .map(code => String.fromCodePoint(code))
+            .join('');
+
+        return codePoints;
+    }
+
+    // Function to send a message to Telegram
+    function sendMessageToTelegram(message) {
+        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    console.log('Message sent successfully');
+                } else {
+                    console.log('Error sending message:', data);
+                }
+            })
+            .catch(error => console.log('Fetch error:', error));
+    }
+
+    // Function to get device type
+    function getDeviceType() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        if (/android/i.test(userAgent)) {
+            return 'Android 📱';
+        } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            return 'iOS 📱';
+        } else {
+            return 'Laptop 💻';
+        }
+    }
+
+    // Function to get visitor info
+    function getVisitorInfo() {
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                const deviceType = getDeviceType();
+                const countryFlag = countryCodeToFlag(data.country_code);
+                const visitorInfo = `📱 *NEW VISITOR*
+━━━━━━━━━━━━━━
+📲 *Device*: ${deviceType}
+🌍 *Country*: ${data.country_name} ${countryFlag}
+🔒 *IP*: \`${data.ip}\`
+📍 *City*: ${data.city || 'Unknown'}
+🕒 *Time*: ${new Date().toLocaleString()}
+━━━━━━━━━━━━━━`;
+                sendMessageToTelegram(visitorInfo);
+            })
+            .catch(error => {
+                console.log('Fetch error:', error);
+                // Try to send basic info even if the IP API fails
+                const deviceType = getDeviceType();
+                const visitorInfo = `📱 *NEW VISITOR*
+━━━━━━━━━━━━━━
+📲 *Device*: ${deviceType}
+🌍 *Country*: Unable to retrieve
+🔒 *IP*: Unable to retrieve
+🕒 *Time*: ${new Date().toLocaleString()}
+━━━━━━━━━━━━━━`;
+                sendMessageToTelegram(visitorInfo);
+            });
+    }
+
+    // Send visitor info when the page loads
+    window.onload = function() {
+        getVisitorInfo();
+    };
+</script>
 
 
   <style>
